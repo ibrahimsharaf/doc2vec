@@ -11,7 +11,7 @@ from sklearn.linear_model import LogisticRegression
 
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-train_path = ./Training.tsv"
+train_path = './Training.tsv'
 test_path = './Testing.tsv'
 training = pd.read_table(train_path , header= None , names = ['entry' , 'label'])
 testing = pd.read_table(test_path, header= None, names = ['entry' , 'label'])
