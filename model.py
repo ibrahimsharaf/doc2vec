@@ -4,8 +4,6 @@ from random import shuffle
 import gensim
 import numpy as np
 import pandas as pd
-
-from gensim.models import doc2vec
 from sklearn import utils
 from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -24,15 +22,15 @@ y_test = testing.label
 
 # some text processing
 def cleanText(corpus):
-	punctuation = """.,?!:;(){}[]"""
-	corpus = [z.lower().replace('\n','') for z in corpus]
-	corpus = [z.replace('<br />', ' ') for z in corpus]
+    punctuation = """.,?!:;(){}[]"""
+    corpus = [z.lower().replace('\n','') for z in corpus]
+    corpus = [z.replace('<br />', ' ') for z in corpus]
 
-	# treat punctuation as individual words
-	for c in punctuation:
-		corpus = [z.replace(c, ' %s '%c) for z in corpus]
-	corpus = [z.split() for z in corpus]
-	return corpus
+    # treat punctuation as individual words
+    for c in punctuation:
+        corpus = [z.replace(c, ' %s '%c) for z in corpus]
+    corpus = [z.split() for z in corpus]
+    return corpus
 
 x_train = cleanText(x_train)
 x_test = cleanText(x_test)
@@ -41,44 +39,38 @@ x_test = cleanText(x_test)
 # We do this by using the LabeledSentence method. The format will be "TRAIN_i" or "TEST_i" where "i" is
 # a dummy index of the review.
 def labelizeReviews(reviews, label_type):
-	labelized = []
-	for i,v in enumerate(reviews):
-		label = '%s_%s'%(label_type,i)
-		labelized.append(LabeledSentence(v, [label]))
-	return labelized
+    labelized = []
+    for i,v in enumerate(reviews):
+        label = '%s_%s'%(label_type,i)
+        labelized.append(LabeledSentence(v, [label]))
+    return labelized
 
 
 allXs = x_train + x_test
 x_train = labelizeReviews(x_train, 'Train')
 x_test = labelizeReviews(x_test, 'Test')
 allXs = labelizeReviews(allXs, 'All')
-for i in range(10):
-	print(x_train[i])
-  print(x_test[i])
 
 # Instantiate Doc2Vec model and build vocab
-model = doc2vec.Doc2Vec(min_count=1, window=10, size=100, sample=1e-4, negative=5, workers=7)
+model = gensim.models.doc2vec.Doc2Vec(min_count=1, window=10, size=100, sample=1e-4, negative=5, workers=7)
 model.build_vocab(allXs)
 # model = doc2vec.Doc2Vec.load('doc2vec_model')
 # Pass through the data set multiple times, shuffling the training reviews each time to improve accuracy
 for epoch in range(20):
     model.train(utils.shuffle(x_train))
 
-model.save('Model_after_train')
-model = doc2vec.Doc2Vec.load('Model_after_train')
-# print(model.docvecs['All_0'])
-
+model.save('trained_model')
 
 # Get training set vectors from our models
 def getVecs(model, corpus, size, vecs_type):
-	vecs = np.zeros((len(corpus), size))
-	for i in range(0 , len(corpus)):
-		index = i
-		if(vecs_type == 'Test'):
-			index = index + 183891
-		prefix = 'All_' + str(index)
-		vecs[i] = model.docvecs[prefix]
-	return vecs 
+    vecs = np.zeros((len(corpus), size))
+    for i in range(0 , len(corpus)):
+        index = i
+        if vecs_type == 'Test':
+            index = index + len(x_train)
+        prefix = 'All_' + str(index)
+        vecs[i] = model.docvecs[prefix]
+    return vecs 
 
 # Get train vectors
 train_vecs = getVecs(model, x_train, 100, 'Train')
@@ -91,7 +83,6 @@ for epoch in range(20):
 # Construct vectors for test reviews
 test_vecs = getVecs(model, x_test, 100, 'Test')
 print test_vecs.shape
-model.save('Model_after_test')
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
 # Train classifier
 lr = LogisticRegression(C=1.0, class_weight=None, dual=False, fit_intercept=True,
