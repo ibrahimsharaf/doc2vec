@@ -1,6 +1,3 @@
-import logging
-from random import shuffle
-
 import gensim
 import numpy as np
 import pandas as pd
@@ -9,7 +6,6 @@ from sklearn.cross_validation import train_test_split
 from sklearn.linear_model import LogisticRegression
 
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
-logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 train_path = './Training.tsv'
 test_path = './Testing.tsv'
 training = pd.read_table(train_path , header= None , names = ['entry' , 'label'])
