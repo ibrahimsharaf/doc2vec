@@ -2,7 +2,7 @@
 A simple binary text classification script using gensim doc2vec for sentence embeddings and scikit-learn random forest for classification.
 
 
-```This repo is mainly for eduactional purposes.```
+```This repo is mainly for eduactional purposes```
 
 #### Dataset
 
