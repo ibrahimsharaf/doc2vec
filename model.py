@@ -12,7 +12,6 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 
-
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 LabeledSentence = gensim.models.doc2vec.LabeledSentence
 
@@ -105,5 +104,5 @@ def test_classifier(d2v, classifier, testing_vectors, testing_labels):
 if __name__ == "__main__":
     x_train, x_test, y_train, y_test, all = read_dataset('dataset.csv')
     d2v_model = train_doc2vec(all)
-    cls = train_classifier(d2v_model, x_train, y_train)
-    test_classifier(d2v_model, cls, x_test, y_test)
+    classifier = train_classifier(d2v_model, x_train, y_train)
+    test_classifier(d2v_model, classifier, x_test, y_test)
