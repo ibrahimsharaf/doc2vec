@@ -21,6 +21,6 @@ This source dataset was collected in association with the following publication:
      ```python model.py```
 
 #### References
-- Kaggle – Bag of Words Meets Bags of Popcorn (https://www.kaggle.com/c/word2vec-nlp-tutorial).
+- Kaggle – Bag of Words Meets Bags of Popcorn (https://www.kaggle.com/c/word2vec-nlp-tutorial)
 - Gensim – Deep learning with paragraph2vec (https://radimrehurek.com/gensim/models/doc2vec.html)
 - Quoc Le and Tomas Mikolov. Distributed Representations of Sentences and Documents (https://arxiv.org/pdf/1405.4053v2.pdf)
