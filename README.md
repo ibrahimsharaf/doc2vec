@@ -2,8 +2,6 @@
 A simple binary text classification script using gensim doc2vec for sentence embeddings and scikit-learn random forest for classification.
 
 
-```This repo is mainly for eduactional purposes```
-
 ### Dataset
 
 25,000 IMDB movie reviews, specially selected for sentiment analysis. The sentiment of reviews is binary (1 for postive, 0 for negative).
