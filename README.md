@@ -1,5 +1,5 @@
 # Doc2Vec Text Classification
-A simple binary text classification script using gensim doc2vec for sentence embeddings and scikit-learn random forest for classification.
+A simple binary text classification script using gensim Doc2Vec for paragraph embeddings and scikit-learn Logistic Regression for classification.
 
 
 ### Dataset
