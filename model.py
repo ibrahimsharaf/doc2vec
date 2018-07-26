@@ -1,14 +1,12 @@
 import logging
-import re
+import random
 
 import gensim
 import numpy as np
 import pandas as pd
 
-from bs4 import BeautifulSoup
-from nltk.corpus import stopwords
 from gensim.models import doc2vec
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 
@@ -18,25 +16,11 @@ LabeledSentence = gensim.models.doc2vec.LabeledSentence
 
 def read_dataset(path):
     dataset = pd.read_csv(path, header=0, delimiter="\t")
-    x_train, x_test, y_train, y_test = train_test_split(dataset.review, dataset.sentiment, random_state=0, test_size=0.10)
-    data = x_train.tolist() + x_test.tolist()
+    x_train, x_test, y_train, y_test = train_test_split(dataset.review, dataset.sentiment, random_state=0, test_size=0.1)
     x_train = label_sentences(x_train, 'Train')
     x_test = label_sentences(x_test, 'Test')
-    all = label_sentences(data, 'All')
-    return x_train, x_test, y_train, y_test, all
-
-
-def clean_text(text):
-    # Remove HTML
-    review_text = BeautifulSoup(text).get_text()
-    # Remove non-letters
-    review_text = re.sub("[^a-zA-Z]", " ", review_text)
-    # Convert words to lower case and split them
-    words = review_text.lower().split()
-    # Remove stopwords
-    stops = set(stopwords.words("english"))
-    words = [w for w in words if not w in stops]
-    return words
+    all_data = x_train + x_test
+    return x_train, x_test, y_train, y_test, all_data
 
 
 def label_sentences(corpus, label_type):
@@ -48,7 +32,7 @@ def label_sentences(corpus, label_type):
     labeled = []
     for i, v in enumerate(corpus):
         label = label_type + '_' + str(i)
-        labeled.append(LabeledSentence([v], [label]))
+        labeled.append(LabeledSentence(v.split(), [label]))
     return labeled
 
 
@@ -63,26 +47,44 @@ def get_vectors(doc2vec_model, corpus_size, vectors_size, vectors_type):
     """
     vectors = np.zeros((corpus_size, vectors_size))
     for i in range(0, corpus_size):
-        index = i
-        if vectors_type == 'Test':
-            index = index + len(x_train)
-        prefix = 'All_' + str(index)
+        prefix = vectors_type + '_' + str(i)
         vectors[i] = doc2vec_model.docvecs[prefix]
     return vectors
 
 
 def train_doc2vec(corpus):
-    logging.info("Building Doc2Vec model")
-    d2v = doc2vec.Doc2Vec(min_count=1, window=3, vector_size=100, sample=1e-3, seed=1, workers=5)
+    logging.info("Building Doc2Vec vocabulary")
+    d2v = doc2vec.Doc2Vec(min_count=1,  # Ignores all words with total frequency lower than this
+                          window=10,  # The maximum distance between the current and predicted word within a sentence
+                          vector_size=300,  # Dimensionality of the generated feature vectors
+                          workers=5,  # Number of worker threads to train the model
+                          alpha=0.025,  # The initial learning rate
+                          min_alpha=0.00025,  # Learning rate will linearly drop to min_alpha as training progresses
+                          dm=1)  # dm defines the training algorithm. If dm=1 means ‘distributed memory’ (PV-DM)
+                                 # and dm =0 means ‘distributed bag of words’ (PV-DBOW)
     d2v.build_vocab(corpus)
+
+    logging.info("Training Doc2Vec model")
+    # 10 epochs take around 10 minutes on my machine (i7), if you have more time/computational power make it 20
+    for epoch in range(10):
+        logging.info('Training iteration #{0}'.format(epoch))
+        d2v.train(corpus, total_examples=d2v.corpus_count, epochs=d2v.iter)
+        # shuffle the corpus
+        random.shuffle(corpus)
+        # decrease the learning rate
+        d2v.alpha -= 0.0002
+        # fix the learning rate, no decay
+        d2v.min_alpha = d2v.alpha
+
+    logging.info("Saving trained Doc2Vec model")
+    d2v.save("d2v.model")
     return d2v
 
 
 def train_classifier(d2v, training_vectors, training_labels):
-    logging.info("Train Doc2Vec on training set")
-    d2v.train(training_vectors, total_examples=len(training_vectors), epochs=d2v.iter)
-    train_vectors = get_vectors(d2v, len(training_vectors), 100, 'Train')
-    model = RandomForestClassifier(n_estimators=100)
+    logging.info("Classifier training")
+    train_vectors = get_vectors(d2v, len(training_vectors), 300, 'Train')
+    model = LogisticRegression()
     model.fit(train_vectors, np.array(training_labels))
     training_predictions = model.predict(train_vectors)
     logging.info('Training predicted classes: {}'.format(np.unique(training_predictions)))
@@ -92,9 +94,8 @@ def train_classifier(d2v, training_vectors, training_labels):
 
 
 def test_classifier(d2v, classifier, testing_vectors, testing_labels):
-    logging.info("Train Doc2Vec on testing set")
-    d2v.train(testing_vectors, total_examples=len(testing_vectors), epochs=d2v.iter)
-    test_vectors = get_vectors(d2v, len(testing_vectors), 100, 'Test')
+    logging.info("Classifier testing")
+    test_vectors = get_vectors(d2v, len(testing_vectors), 300, 'Test')
     testing_predictions = classifier.predict(test_vectors)
     logging.info('Testing predicted classes: {}'.format(np.unique(testing_predictions)))
     logging.info('Testing accuracy: {}'.format(accuracy_score(testing_labels, testing_predictions)))
@@ -102,7 +103,7 @@ def test_classifier(d2v, classifier, testing_vectors, testing_labels):
 
 
 if __name__ == "__main__":
-    x_train, x_test, y_train, y_test, all = read_dataset('dataset.csv')
-    d2v_model = train_doc2vec(all)
+    x_train, x_test, y_train, y_test, all_data = read_dataset('dataset.csv')
+    d2v_model = train_doc2vec(all_data)
     classifier = train_classifier(d2v_model, x_train, y_train)
     test_classifier(d2v_model, classifier, x_test, y_test)
