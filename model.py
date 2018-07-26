@@ -1,7 +1,6 @@
 import logging
 import random
 
-import gensim
 import numpy as np
 import pandas as pd
 
@@ -11,7 +10,6 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-LabeledSentence = gensim.models.doc2vec.LabeledSentence
 
 
 def read_dataset(path):
@@ -32,7 +30,7 @@ def label_sentences(corpus, label_type):
     labeled = []
     for i, v in enumerate(corpus):
         label = label_type + '_' + str(i)
-        labeled.append(LabeledSentence(v.split(), [label]))
+        labeled.append(doc2vec.LabeledSentence(v.split(), [label]))
     return labeled
 
 
