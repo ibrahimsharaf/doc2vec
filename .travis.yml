@@ -1,7 +1,7 @@
 language: python
-  python:
+python:
     - "3.5"
-  install:
+install:
   - pip install -r requirements.txt
-  script:
+script:
     - python model.py
