@@ -15,9 +15,10 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 def read_dataset(path):
     dataset = pd.read_csv(path, header=0, delimiter="\t")
     x_train, x_test, y_train, y_test = train_test_split(dataset.review, dataset.sentiment, random_state=0, test_size=0.1)
-    xtrain = label_sentences(x_train, 'Train')
-    xtest = label_sentences(x_test, 'Test')
-    return xtrain, xtest, y_train.as_matrix(), y_test.as_matrix()
+    x_train = label_sentences(x_train, 'Train')
+    x_test = label_sentences(x_test, 'Test')
+    all_data = x_train + x_test
+    return x_train, x_test, y_train, y_test, all_data
 
 
 def label_sentences(corpus, label_type):
@@ -33,7 +34,7 @@ def label_sentences(corpus, label_type):
     return labeled
 
 
-def get_vectors(doc2vec_model, corpus_size, vectors_size, vectors_type,tagged_data,tagged_labels):
+def get_vectors(doc2vec_model, corpus_size, vectors_size, vectors_type):
     """
     Get vectors from trained doc2vec model
     :param doc2vec_model: Trained Doc2Vec model
@@ -43,16 +44,10 @@ def get_vectors(doc2vec_model, corpus_size, vectors_size, vectors_type,tagged_da
     :return: list of vectors
     """
     vectors = np.zeros((corpus_size, vectors_size))
-    labels = np.zeros(corpus_size)
     for i in range(0, corpus_size):
-    	tag = tagged_data[i].tags[0]
-    	typ,label = tag.split("_")
-    	if(vectors_type=='Train'):
-    		vectors[i] = doc2vec_model.docvecs[tag]
-    	else:
-    		vectors[i] = doc2vec_model.infer_vector(tagged_data[i].words)
-    	labels[i] = tagged_labels[int(label)]
-    return vectors,labels
+        prefix = vectors_type + '_' + str(i)
+        vectors[i] = doc2vec_model.docvecs[prefix]
+    return vectors
 
 
 def train_doc2vec(corpus):
@@ -81,32 +76,32 @@ def train_doc2vec(corpus):
 
     logging.info("Saving trained Doc2Vec model")
     d2v.save("d2v.model")
-    return d2v,corpus
+    return d2v
 
 
 def train_classifier(d2v, training_vectors, training_labels):
     logging.info("Classifier training")
-    train_vectors,train_labels = get_vectors(d2v, len(training_vectors), 300, 'Train',training_vectors,training_labels)
-    model = LogisticRegression(random_state=0)
-    model.fit(train_vectors,train_labels)
+    train_vectors = get_vectors(d2v, len(training_vectors), 300, 'Train')
+    model = LogisticRegression()
+    model.fit(train_vectors, np.array(training_labels))
     training_predictions = model.predict(train_vectors)
     logging.info('Training predicted classes: {}'.format(np.unique(training_predictions)))
-    logging.info('Training accuracy: {}'.format(accuracy_score(train_labels, training_predictions)))
-    logging.info('Training F1 score: {}'.format(f1_score(train_labels, training_predictions, average='weighted')))
+    logging.info('Training accuracy: {}'.format(accuracy_score(training_labels, training_predictions)))
+    logging.info('Training F1 score: {}'.format(f1_score(training_labels, training_predictions, average='weighted')))
     return model
 
 
 def test_classifier(d2v, classifier, testing_vectors, testing_labels):
     logging.info("Classifier testing")
-    test_vectors,test_labels = get_vectors(d2v, len(testing_vectors), 300, 'Test',testing_vectors,testing_labels)
+    test_vectors = get_vectors(d2v, len(testing_vectors), 300, 'Test')
     testing_predictions = classifier.predict(test_vectors)
     logging.info('Testing predicted classes: {}'.format(np.unique(testing_predictions)))
-    logging.info('Testing accuracy: {}'.format(accuracy_score(test_labels, testing_predictions)))
-    logging.info('Testing F1 score: {}'.format(f1_score(test_labels, testing_predictions, average='weighted')))
+    logging.info('Testing accuracy: {}'.format(accuracy_score(testing_labels, testing_predictions)))
+    logging.info('Testing F1 score: {}'.format(f1_score(testing_labels, testing_predictions, average='weighted')))
 
 
 if __name__ == "__main__":
-    x_train, x_test, y_train, y_test = read_dataset('dataset.csv')
-    d2v_model,x_train = train_doc2vec(x_train)
+    x_train, x_test, y_train, y_test, all_data = read_dataset('dataset.csv')
+    d2v_model = train_doc2vec(all_data)
     classifier = train_classifier(d2v_model, x_train, y_train)
     test_classifier(d2v_model, classifier, x_test, y_test)
