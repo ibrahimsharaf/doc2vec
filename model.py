@@ -66,7 +66,7 @@ def train_doc2vec(corpus):
     # 10 epochs take around 10 minutes on my machine (i7), if you have more time/computational power make it 20
     for epoch in range(10):
         logging.info('Training iteration #{0}'.format(epoch))
-        d2v.train(corpus, total_examples=d2v.corpus_count, epochs=d2v.iter)
+        d2v.train(corpus, total_examples=d2v.corpus_count, epochs=d2v.epochs)
         # shuffle the corpus
         random.shuffle(corpus)
         # decrease the learning rate
