@@ -58,8 +58,8 @@ def train_doc2vec(corpus):
                           workers=5,  # Number of worker threads to train the model
                           alpha=0.025,  # The initial learning rate
                           min_alpha=0.00025,  # Learning rate will linearly drop to min_alpha as training progresses
-                          dm=1)  # dm defines the training algorithm. If dm=1 means ‘distributed memory’ (PV-DM)
-                                 # and dm =0 means ‘distributed bag of words’ (PV-DBOW)
+                          dm=1)  # dm defines the training algorithm. If dm=1 means 'distributed memory' (PV-DM)
+                                 # and dm =0 means 'distributed bag of words' (PV-DBOW)
     d2v.build_vocab(corpus)
 
     logging.info("Training Doc2Vec model")
