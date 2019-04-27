@@ -155,3 +155,6 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
+# .idea and models
+.idea/
+*.model*
