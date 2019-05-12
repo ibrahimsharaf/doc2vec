@@ -9,6 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.externals import joblib
+from gensim.models.doc2vec import Doc2Vec
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -112,7 +113,8 @@ def load_classifier(filename):
 
 if __name__ == "__main__":
     x_train, x_test, y_train, y_test, all_data = read_dataset('dataset.csv')
-    d2v_model = train_doc2vec(all_data)
+    #d2v_model = train_doc2vec(all_data)
+    d2v_model = Doc2Vec.load("d2v.model")
     classifier = train_classifier(d2v_model, x_train, y_train)
     joblib_file = "joblib_model.pkl"
     save_classifier(classifier, joblib_file)
