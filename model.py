@@ -1,6 +1,6 @@
 import logging
 import random
-
+import os
 import numpy as np
 import pandas as pd
 
@@ -8,6 +8,7 @@ from gensim.models import doc2vec
 from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, f1_score
+from sklearn.externals import joblib
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
@@ -99,9 +100,21 @@ def test_classifier(d2v, classifier, testing_vectors, testing_labels):
     logging.info('Testing accuracy: {}'.format(accuracy_score(testing_labels, testing_predictions)))
     logging.info('Testing F1 score: {}'.format(f1_score(testing_labels, testing_predictions, average='weighted')))
 
+def save_classifier(model, filename):
+    joblib.dump(model, filename)
+
+def load_classifier(filename):
+    if(os.path.isfile('./' +filename)):
+        loaded_model = joblib.load(filename)
+        return loaded_model
+    else:
+        return None
 
 if __name__ == "__main__":
     x_train, x_test, y_train, y_test, all_data = read_dataset('dataset.csv')
     d2v_model = train_doc2vec(all_data)
     classifier = train_classifier(d2v_model, x_train, y_train)
-    test_classifier(d2v_model, classifier, x_test, y_test)
+    joblib_file = "joblib_model.pkl"
+    save_classifier(classifier, joblib_file)
+    model = load_classifier(joblib_file)
+    test_classifier(d2v_model, model, x_test, y_test)
