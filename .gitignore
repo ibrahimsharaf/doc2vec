@@ -157,5 +157,6 @@ fabric.properties
 
 # .idea and models
 .idea/
-*.model*
-*.pkl
+.classifiers/*.model*
+.classifiers/*.pkl
+.data/*.csv
