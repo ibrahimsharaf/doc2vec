@@ -50,4 +50,17 @@ class doc2VecBuilder(ModelBuilder):
         self.model = d2v
         return d2v
 
-
+    def get_vectors(self,corpus_size, vectors_size, vectors_type):
+        """
+        Get vectors from trained doc2vec model
+        :param doc2vec_model: Trained Doc2Vec model
+        :param corpus_size: Size of the data
+        :param vectors_size: Size of the embedding vectors
+        :param vectors_type: Training or Testing vectors
+        :return: list of vectors
+        """
+        vectors = np.zeros((corpus_size, vectors_size))
+        for i in range(0, corpus_size):
+            prefix = vectors_type + '_' + str(i)
+            vectors[i] = self.model.docvecs[prefix]
+        return vectors
