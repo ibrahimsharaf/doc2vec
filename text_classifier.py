@@ -1,8 +1,8 @@
 import pandas as pd
 import logging
 from sklearn.model_selection import train_test_split
-from classifiers.doc2vec_builder import doc2VecBuilder
-from classifiers.classifier_builder import classifierBuilder
+from models.doc2vec_builder import doc2VecBuilder
+from models.classifier_builder import classifierBuilder
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 class TextClassifier():
@@ -49,16 +49,16 @@ class TextClassifier():
         else:
             self.classifier.test_model(self.d2v, x_test, y_test)
 
-def main(mode):
+def run(mode,d2v_file, classifier_file):
     tc = TextClassifier()
     tc.read_data('./data/dataset.csv')
     if mode == 'Test':
-        tc.test_classifier("d2v.model", "joblib_model.pkl")
+        tc.test_classifier(d2v_file, classifier_file)
     else:
-        tc.train_classifier("d2v.model", "joblib_model.pkl")
+        tc.train_classifier(d2v_file, classifier_file)
 
 if __name__ == "__main__":
-    main("Train");
+    run("Test","d2v.model", "joblib_model.pkl");
     #tc = TextClassifier()
     #tc.read_data('./data/dataset.csv')
     #tc.train_classifier("d2v.model", "joblib_model.pkl")
