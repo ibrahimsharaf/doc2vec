@@ -11,12 +11,14 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 class doc2VecBuilder(ModelBuilder):
 
-    def __init__(self, corpus):
-        self.corpus = corpus
+    def __init__(self):
+        super.__init__()
 
 
-    def initialize_model(self):
+
+    def initialize_model(self, corpus):
         logging.info("Building Doc2Vec vocabulary")
+        self.corpus = corpus
         self.model = doc2vec.Doc2Vec(min_count=1,  # Ignores all words with total frequency lower than this
                               window=10,
                               # The maximum distance between the current and predicted word within a sentence
