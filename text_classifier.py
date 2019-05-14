@@ -1,5 +1,6 @@
 import pandas as pd
 import logging
+import sys, getopt
 from sklearn.model_selection import train_test_split
 from models.doc2vec_builder import doc2VecBuilder
 from models.classifier_builder import classifierBuilder
@@ -58,7 +59,7 @@ def run(mode,d2v_file, classifier_file):
         tc.train_classifier(d2v_file, classifier_file)
 
 if __name__ == "__main__":
-    run("Test","d2v.model", "joblib_model.pkl");
+    run("Train","d2v.model", "joblib_model.pkl")
     #tc = TextClassifier()
     #tc.read_data('./data/dataset.csv')
     #tc.train_classifier("d2v.model", "joblib_model.pkl")
