@@ -34,3 +34,11 @@ class classifierBuilder(ModelBuilder):
             self.model = loaded_model
         else:
             self.model = None
+
+    def test_model(self,d2v, testing_vectors, testing_labels):
+        logging.info("Classifier testing")
+        test_vectors = doc2VecBuilder.get_vectors(d2v, len(testing_vectors), 300, 'Test')
+        testing_predictions = self.model.predict(test_vectors)
+        logging.info('Testing predicted classes: {}'.format(np.unique(testing_predictions)))
+        logging.info('Testing accuracy: {}'.format(accuracy_score(testing_labels, testing_predictions)))
+        logging.info('Testing F1 score: {}'.format(f1_score(testing_labels, testing_predictions, average='weighted')))
