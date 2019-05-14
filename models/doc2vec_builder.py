@@ -1,5 +1,6 @@
 import logging
 import random
+import os
 import numpy as np
 from gensim.models import doc2vec
 from gensim.models.doc2vec import Doc2Vec
@@ -40,15 +41,18 @@ class doc2VecBuilder(ModelBuilder):
             # fix the learning rate, no decay
             self.model.min_alpha = self.model.alpha
 
-    def save_model(self):
+    def save_model(self, filename):
         logging.info("Saving trained Doc2Vec model")
-        self.model.save("./classifiers/d2v.model")
+        self.model.save("./classifiers/"+filename)
 
-    def load_model(self):
+    def load_model(self,filename):
         logging.info("Loading trained Doc2Vec model")
-        d2v = Doc2Vec.load("./classifiers/d2v.model")
-        self.model = d2v
-        return d2v
+        if (os.path.isfile('./classifiers/' + filename)):
+            d2v = Doc2Vec.load("./classifiers/"+filename)
+            self.model = d2v
+        else:
+            self.model = None
+        #return d2v
 
     def get_vectors(self,corpus_size, vectors_size, vectors_type):
         """
