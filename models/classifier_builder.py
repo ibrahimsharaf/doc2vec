@@ -6,7 +6,9 @@ from sklearn.metrics import accuracy_score, f1_score
 from sklearn.externals import joblib
 from .model_builder import ModelBuilder
 from .doc2vec_builder import doc2VecBuilder
+
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
+
 
 class classifierBuilder(ModelBuilder):
     def __init__(self):
@@ -22,14 +24,14 @@ class classifierBuilder(ModelBuilder):
         training_predictions = self.model.predict(train_vectors)
         logging.info('Training predicted classes: {}'.format(np.unique(training_predictions)))
         logging.info('Training accuracy: {}'.format(accuracy_score(training_labels, training_predictions)))
-        logging.info('Training F1 score: {}'.format(f1_score(training_labels, training_predictions, average='weighted')))
-
+        logging.info(
+            'Training F1 score: {}'.format(f1_score(training_labels, training_predictions, average='weighted')))
 
     def save_model(self, filename):
         logging.info("Saving trained classification model")
-        joblib.dump(self.model,"./classifiers/"+ filename)
+        joblib.dump(self.model, "./classifiers/" + filename)
 
-    def load_model(self,filename):
+    def load_model(self, filename):
         logging.info("Loading trained classification model")
         if (os.path.isfile('./classifiers/' + filename)):
             loaded_model = joblib.load('./classifiers/' + filename)
@@ -37,7 +39,7 @@ class classifierBuilder(ModelBuilder):
         else:
             self.model = None
 
-    def test_model(self,d2v, testing_vectors, testing_labels):
+    def test_model(self, d2v, testing_vectors, testing_labels):
         logging.info("Classifier testing")
         test_vectors = doc2VecBuilder.get_vectors(d2v, len(testing_vectors), 300, 'Test')
         testing_predictions = self.model.predict(test_vectors)
