@@ -26,9 +26,11 @@ class classifierBuilder(ModelBuilder):
 
 
     def save_model(self, filename):
+        logging.info("Saving trained classification model")
         joblib.dump(self.model,"./classifiers/"+ filename)
 
     def load_model(self,filename):
+        logging.info("Loading trained classification model")
         if (os.path.isfile('./classifiers/' + filename)):
             loaded_model = joblib.load(filename)
             self.model = loaded_model
