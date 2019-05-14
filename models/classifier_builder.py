@@ -10,7 +10,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 
 class classifierBuilder(ModelBuilder):
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
     def initialize_model(self):
         self.model = LogisticRegression()
@@ -32,7 +32,7 @@ class classifierBuilder(ModelBuilder):
     def load_model(self,filename):
         logging.info("Loading trained classification model")
         if (os.path.isfile('./classifiers/' + filename)):
-            loaded_model = joblib.load(filename)
+            loaded_model = joblib.load('./classifiers/' + filename)
             self.model = loaded_model
         else:
             self.model = None

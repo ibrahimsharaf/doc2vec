@@ -12,7 +12,7 @@ logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=lo
 class doc2VecBuilder(ModelBuilder):
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
 
 
@@ -70,3 +70,15 @@ class doc2VecBuilder(ModelBuilder):
             prefix = vectors_type + '_' + str(i)
             vectors[i] = self.model.docvecs[prefix]
         return vectors
+
+    def label_sentences( corpus, label_type):
+        """
+        Gensim's Doc2Vec implementation requires each document/paragraph to have a label associated with it.
+        We do this by using the LabeledSentence method. The format will be "TRAIN_i" or "TEST_i" where "i" is
+        a dummy index of the review.
+        """
+        labeled = []
+        for i, v in enumerate(corpus):
+            label = label_type + '_' + str(i)
+            labeled.append(doc2vec.LabeledSentence(v.split(), [label]))
+        return labeled

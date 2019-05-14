@@ -22,19 +22,19 @@ class TextClassifier():
         all_data = x_train + x_test
         return x_train, x_test, y_train, y_test, all_data
 
-    def prepare_test_data(self):
-        x_test = doc2VecBuilder.label_sentences(self.dataset.review, 'Test')
-        y_test = self.dataset.sentiment
-        return x_test, y_test
+    #def prepare_test_data(self):
+    #    x_test = doc2VecBuilder.label_sentences(self.dataset.review, 'Test')
+    #    y_test = self.dataset.sentiment
+    #    return x_test, y_test
 
     def train_classifier(self, d2v_file, classifier_file):
         x_train, x_test, y_train, y_test, all_data = self.prepare_all_data()
         self.d2v.initialize_model(all_data)
         self.d2v.train_model()
-        self.d2v.save_model("d2v.model")
+        self.d2v.save_model(d2v_file)
         self.classifier.initialize_model()
-        self.classifier.train_model(self.d2v.model, x_train, y_train)
-        self.classifier.save_model("joblib_model.pkl")
+        self.classifier.train_model(self.d2v, x_train, y_train)
+        self.classifier.save_model(classifier_file)
         self.classifier.test_model(self.d2v, x_test, y_test)
 
     def test_classifier(self, d2v_file, classifier_file):
@@ -42,10 +42,11 @@ class TextClassifier():
         x_train, x_test, y_train, y_test, all_data = self.prepare_all_data()
         self.d2v.load_model(d2v_file)
         self.classifier.load_model(classifier_file)
-        self.test_classifier(self.d2v.model, x_test, y_test)
+        self.classifier.test_model(self.d2v, x_test, y_test)
 
 if __name__ == "__main__":
     tc = TextClassifier()
     tc.read_data('./data/dataset.csv')
-    tc.test_classifier("d2v.model","joblib_model.pkl")
+    tc.train_classifier("d2v.model", "joblib_model.pkl")
+    #tc.test_classifier("d2v.model","joblib_model.pkl")
 
