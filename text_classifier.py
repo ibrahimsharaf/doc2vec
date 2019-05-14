@@ -1,7 +1,9 @@
 import pandas as pd
+import logging
 from sklearn.model_selection import train_test_split
-from models.doc2vec_builder import doc2VecBuilder
-from models.classifier_builder import classifierBuilder
+from classifiers.doc2vec_builder import doc2VecBuilder
+from classifiers.classifier_builder import classifierBuilder
+logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 
 class TextClassifier():
 
@@ -42,11 +44,23 @@ class TextClassifier():
         x_train, x_test, y_train, y_test, all_data = self.prepare_all_data()
         self.d2v.load_model(d2v_file)
         self.classifier.load_model(classifier_file)
-        self.classifier.test_model(self.d2v, x_test, y_test)
+        if(self.d2v.model is None and self.classifier.model is None):
+            logging.info("No Trained Models Found, Train First")
+        else:
+            self.classifier.test_model(self.d2v, x_test, y_test)
 
-if __name__ == "__main__":
+def main(mode):
     tc = TextClassifier()
     tc.read_data('./data/dataset.csv')
-    tc.train_classifier("d2v.model", "joblib_model.pkl")
+    if mode == 'Test':
+        tc.test_classifier("d2v.model", "joblib_model.pkl")
+    else:
+        tc.train_classifier("d2v.model", "joblib_model.pkl")
+
+if __name__ == "__main__":
+    main("Train");
+    #tc = TextClassifier()
+    #tc.read_data('./data/dataset.csv')
+    #tc.train_classifier("d2v.model", "joblib_model.pkl")
     #tc.test_classifier("d2v.model","joblib_model.pkl")
 

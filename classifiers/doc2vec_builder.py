@@ -54,7 +54,6 @@ class doc2VecBuilder(ModelBuilder):
             self.model = d2v
         else:
             self.model = None
-        #return d2v
 
     def get_vectors(self,corpus_size, vectors_size, vectors_type):
         """
