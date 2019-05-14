@@ -60,8 +60,5 @@ def run(mode,d2v_file, classifier_file):
 
 if __name__ == "__main__":
     run("Train","d2v.model", "joblib_model.pkl")
-    #tc = TextClassifier()
-    #tc.read_data('./data/dataset.csv')
-    #tc.train_classifier("d2v.model", "joblib_model.pkl")
-    #tc.test_classifier("d2v.model","joblib_model.pkl")
+    #run("Test", "d2v.model", "joblib_model.pkl")
 
