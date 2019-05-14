@@ -1,12 +1,16 @@
 import pandas as pd
 import logging
 import sys, getopt
+import os, inspect
 from sklearn.model_selection import train_test_split
 from models.doc2vec_builder import doc2VecBuilder
 from models.classifier_builder import classifierBuilder
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
+base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
+base_path = os.path.dirname(os.path.abspath(base_file_path))
+project_dir_path = os.path.dirname(os.path.abspath(base_path))
+data_path = os.path.join(project_dir_path, 'data')
 
 class TextClassifier():
 
@@ -16,8 +20,9 @@ class TextClassifier():
         self.classifier = classifierBuilder()
         self.dataset = None
 
-    def read_data(self, path):
-        self.dataset = pd.read_csv(path, header=0, delimiter="\t")
+    def read_data(self, filename):
+        filename = os.path.join(data_path, filename)
+        self.dataset = pd.read_csv(filename, header=0, delimiter="\t")
 
     def prepare_all_data(self):
         x_train, x_test, y_train, y_test = train_test_split(self.dataset.review, self.dataset.sentiment, random_state=0,
@@ -53,9 +58,9 @@ class TextClassifier():
             self.classifier.test_model(self.d2v, x_test, y_test)
 
 
-def run(mode, d2v_file, classifier_file):
+def run(mode,dataset_file, d2v_file, classifier_file):
     tc = TextClassifier()
-    tc.read_data('./data/dataset.csv')
+    tc.read_data(dataset_file)
     if mode == 'Test':
         tc.test_classifier(d2v_file, classifier_file)
     else:
@@ -63,5 +68,5 @@ def run(mode, d2v_file, classifier_file):
 
 
 if __name__ == "__main__":
-    run("Train", "d2v.model", "joblib_model.pkl")
+    run("Train","dataset.csv", "d2v.model", "joblib_model.pkl")
     # run("Test", "d2v.model", "joblib_model.pkl")

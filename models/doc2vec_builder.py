@@ -1,6 +1,7 @@
 import logging
 import random
 import os
+import inspect
 import numpy as np
 from gensim.models import doc2vec
 from gensim.models.doc2vec import Doc2Vec
@@ -8,7 +9,10 @@ from gensim.models.doc2vec import Doc2Vec
 from .model_builder import ModelBuilder
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
+base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
+base_path = os.path.dirname(os.path.abspath(base_file_path))
+project_dir_path = os.path.dirname(os.path.abspath(base_path))
+classifiers_path = os.path.join(project_dir_path, 'classifiers')
 
 class doc2VecBuilder(ModelBuilder):
 
@@ -45,12 +49,14 @@ class doc2VecBuilder(ModelBuilder):
 
     def save_model(self, filename):
         logging.info("Saving trained Doc2Vec model")
-        self.model.save("./classifiers/" + filename)
+        filename = os.path.join(classifiers_path, filename)
+        self.model.save(filename)
 
     def load_model(self, filename):
         logging.info("Loading trained Doc2Vec model")
-        if (os.path.isfile('./classifiers/' + filename)):
-            d2v = Doc2Vec.load("./classifiers/" + filename)
+        filename = os.path.join(classifiers_path, filename)
+        if (os.path.isfile(filename)):
+            d2v = Doc2Vec.load(filename)
             self.model = d2v
         else:
             self.model = None

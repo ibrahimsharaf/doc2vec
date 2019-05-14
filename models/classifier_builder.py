@@ -1,6 +1,7 @@
 import logging
 import numpy as np
 import os
+import inspect
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score
 from sklearn.externals import joblib
@@ -8,7 +9,10 @@ from .model_builder import ModelBuilder
 from .doc2vec_builder import doc2VecBuilder
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
-
+base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
+base_path = os.path.dirname(os.path.abspath(base_file_path))
+project_dir_path = os.path.dirname(os.path.abspath(base_path))
+classifiers_path = os.path.join(project_dir_path, 'classifiers')
 
 class classifierBuilder(ModelBuilder):
     def __init__(self):
@@ -29,12 +33,14 @@ class classifierBuilder(ModelBuilder):
 
     def save_model(self, filename):
         logging.info("Saving trained classification model")
-        joblib.dump(self.model, "./classifiers/" + filename)
+        filename = os.path.join(classifiers_path, filename)
+        joblib.dump(self.model, filename)
 
     def load_model(self, filename):
         logging.info("Loading trained classification model")
-        if (os.path.isfile('./classifiers/' + filename)):
-            loaded_model = joblib.load('./classifiers/' + filename)
+        filename = os.path.join(classifiers_path, filename)
+        if (os.path.isfile(filename)):
+            loaded_model = joblib.load(filename)
             self.model = loaded_model
         else:
             self.model = None

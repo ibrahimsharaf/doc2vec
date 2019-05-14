@@ -22,3 +22,5 @@ class ModelBuilder(ABC):
     @abstractmethod
     def load_model(self):
         pass
+
+
