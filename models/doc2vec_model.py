@@ -6,7 +6,7 @@ import numpy as np
 from gensim.models import doc2vec
 from gensim.models.doc2vec import Doc2Vec
 
-from .model_builder import ModelBuilder
+from .model import Model
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
@@ -14,7 +14,7 @@ base_path = os.path.dirname(os.path.abspath(base_file_path))
 project_dir_path = os.path.dirname(os.path.abspath(base_path))
 classifiers_path = os.path.join(project_dir_path, 'classifiers')
 
-class doc2VecBuilder(ModelBuilder):
+class doc2VecModel(Model):
 
     def __init__(self):
         super().__init__()

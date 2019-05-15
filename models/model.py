@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class ModelBuilder(ABC):
+class Model(ABC):
 
     def __init__(self):
         self.model = None

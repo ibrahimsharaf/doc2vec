@@ -3,8 +3,8 @@ import logging
 import sys, getopt
 import os, inspect
 from sklearn.model_selection import train_test_split
-from models.doc2vec_builder import doc2VecBuilder
-from models.classifier_builder import classifierBuilder
+from models.doc2vec_model import doc2VecModel
+from models.classifier_model import classifierModel
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
@@ -15,8 +15,8 @@ class TextClassifier():
 
     def __init__(self):
         super().__init__()
-        self.d2v = doc2VecBuilder()
-        self.classifier = classifierBuilder()
+        self.d2v = doc2VecModel()
+        self.classifier = classifierModel()
         self.dataset = None
 
     def read_data(self, filename):
@@ -26,8 +26,8 @@ class TextClassifier():
     def prepare_all_data(self):
         x_train, x_test, y_train, y_test = train_test_split(self.dataset.review, self.dataset.sentiment, random_state=0,
                                                             test_size=0.1)
-        x_train = doc2VecBuilder.label_sentences(x_train, 'Train')
-        x_test = doc2VecBuilder.label_sentences(x_test, 'Test')
+        x_train = doc2VecModel.label_sentences(x_train, 'Train')
+        x_test = doc2VecModel.label_sentences(x_test, 'Test')
         all_data = x_train + x_test
         return x_train, x_test, y_train, y_test, all_data
 
