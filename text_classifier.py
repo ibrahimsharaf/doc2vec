@@ -8,8 +8,7 @@ from models.classifier_builder import classifierBuilder
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
-base_path = os.path.dirname(os.path.abspath(base_file_path))
-project_dir_path = os.path.dirname(os.path.abspath(base_path))
+project_dir_path = os.path.dirname(os.path.abspath(base_file_path))
 data_path = os.path.join(project_dir_path, 'data')
 
 class TextClassifier():
@@ -52,21 +51,28 @@ class TextClassifier():
         x_train, x_test, y_train, y_test, all_data = self.prepare_all_data()
         self.d2v.load_model(d2v_file)
         self.classifier.load_model(classifier_file)
-        if (self.d2v.model is None and self.classifier.model is None):
-            logging.info("No Trained Models Found, Train First")
+        if (self.d2v.model is None or self.classifier.model is None):
+            logging.info("No Trained Models Found, Train First or Use Correct Model Names")
         else:
             self.classifier.test_model(self.d2v, x_test, y_test)
 
 
-def run(mode,dataset_file, d2v_file, classifier_file):
-    tc = TextClassifier()
-    tc.read_data(dataset_file)
-    if mode == 'Test':
-        tc.test_classifier(d2v_file, classifier_file)
+def main(argv):
+    if(len(argv)==4):
+        mode = argv[0]
+        dataset_file = argv[1]
+        d2v_file = argv[2]
+        classifier_file = argv[3]
+
+        tc = TextClassifier()
+        tc.read_data(dataset_file)
+        if mode.lower() == 'test':
+            tc.test_classifier(d2v_file, classifier_file)
+        else:
+            tc.train_classifier(d2v_file, classifier_file)
     else:
-        tc.train_classifier(d2v_file, classifier_file)
+        print ('python text_classifier.py <mode> <dataset_file> <doc2vec_file> <classifier_file>')
 
 
 if __name__ == "__main__":
-    run("Train","dataset.csv", "d2v.model", "joblib_model.pkl")
-    # run("Test", "d2v.model", "joblib_model.pkl")
+    main(sys.argv[1:])
