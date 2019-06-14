@@ -1,5 +1,5 @@
 # Doc2Vec Text Classification
-Text classification script using gensim Doc2Vec for paragraph embeddings and scikit-learn Logistic Regression for classification.
+Text classification model which uses gensim Doc2Vec for generating paragraph embeddings and scikit-learn Logistic Regression for classification.
 
 
 ### Dataset
@@ -13,10 +13,10 @@ This source dataset was collected in association with the following publication:
 ### Usage
 - Install the required tools 
 
-    ```sudo pip install -r requirements.txt```
+    ```pip install -r requirements.txt```
 - Run the script 
     
-     ```python model.py```
+     ```python text_classifier.py```
 
 ### References
 - Kaggle – Bag of Words Meets Bags of Popcorn (https://www.kaggle.com/c/word2vec-nlp-tutorial)
