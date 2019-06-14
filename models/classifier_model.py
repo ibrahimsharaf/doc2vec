@@ -1,11 +1,14 @@
-import logging
-import numpy as np
-import os
-import inspect
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, f1_score
 from .model import Model
 from .doc2vec_model import doc2VecModel
+
+import logging
+import os
+import inspect
+
+import numpy as np
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, f1_score
+
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
@@ -29,12 +32,6 @@ class classifierModel(Model):
         logging.info('Training accuracy: {}'.format(accuracy_score(training_labels, training_predictions)))
         logging.info(
             'Training F1 score: {}'.format(f1_score(training_labels, training_predictions, average='weighted')))
-
-    def save_model(self, filename):
-        logging.info("Saving trained classification model")
-
-    def load_model(self, filename):
-        logging.info("Loading trained classification model")
 
     def test_model(self, d2v, testing_vectors, testing_labels):
         logging.info("Classifier testing")

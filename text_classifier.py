@@ -1,17 +1,19 @@
-import pandas as pd
-import logging
-import sys, getopt
-import os, inspect
-import numpy as np
-from sklearn.model_selection import train_test_split
 from models.doc2vec_model import doc2VecModel
 from models.classifier_model import classifierModel
+
+import os
+import logging
+import inspect
+
+import pandas as pd
+from sklearn.model_selection import train_test_split
+
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
 project_dir_path = os.path.dirname(os.path.abspath(base_file_path))
 data_path = os.path.join(project_dir_path, 'data')
-default_classifier = os.path.join(project_dir_path, 'classifiers','joblib_model.pkl')
+default_classifier = os.path.join(project_dir_path, 'classifiers','logreg_model.pkl')
 default_doc2vec= os.path.join(project_dir_path, 'classifiers','d2v.model')
 default_dataset= os.path.join(data_path, 'dataset.csv')
 
@@ -49,24 +51,17 @@ class TextClassifier():
         return self.d2v, self.classifier
 
     def test_classifier(self):
-        x_train, x_test, y_train, y_test, all_data = self.prepare_all_data()
+        _, x_test, _, y_test, _ = self.prepare_all_data()
         if (self.d2v.model is None or self.classifier.model is None):
             logging.info("No Trained Models Found, Train First or Use Correct Model Names")
         else:
             self.classifier.test_model(self.d2v, x_test, y_test)
 
-def main(argv):
-    if(len(argv)==1):
-        dataset_file = argv[0]
-
-        tc = TextClassifier()
-        tc.read_data(dataset_file)
-        tc.test_classifier()
-        tc.train_classifier()
-
-    else:
-        print('Please use the following Commands to use text_classifier for training/testing/predicting:')
-        print ('To Run: python text_classifier.py <dataset_file>')
+def run(dataset_file):
+    tc = TextClassifier()
+    tc.read_data(dataset_file)
+    tc.test_classifier()
+    tc.train_classifier()
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    run("dataset.csv")

@@ -1,12 +1,14 @@
+from .model import Model
+
 import logging
 import random
 import os
 import inspect
+
 import numpy as np
 from gensim.models import doc2vec
-from gensim.models.doc2vec import Doc2Vec
 
-from .model import Model
+
 
 logging.basicConfig(format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
 base_file_path = inspect.getframeinfo(inspect.currentframe()).filename
@@ -46,20 +48,6 @@ class doc2VecModel(Model):
             self.model.alpha -= 0.0002
             # fix the learning rate, no decay
             self.model.min_alpha = self.model.alpha
-
-    def save_model(self, filename):
-        logging.info("Saving trained Doc2Vec model")
-        filename = os.path.join(classifiers_path, filename)
-        self.model.save(filename)
-
-    def load_model(self, filename):
-        logging.info("Loading trained Doc2Vec model")
-        filename = os.path.join(classifiers_path, filename)
-        if (os.path.isfile(filename)):
-            d2v = Doc2Vec.load(filename)
-            self.model = d2v
-        else:
-            self.model = None
 
     def get_vectors(self, corpus_size, vectors_size, vectors_type):
         """

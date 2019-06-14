@@ -15,12 +15,5 @@ class Model(ABC):
     def train_model(self):
         pass
 
-    @abstractmethod
-    def save_model(self):
-        pass
-
-    @abstractmethod
-    def load_model(self):
-        pass
 
 

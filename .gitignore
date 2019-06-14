@@ -155,9 +155,5 @@ crashlytics.properties
 crashlytics-build.properties
 fabric.properties
 
-# .idea and models
+# .idea
 .idea/
-classifiers/*.model
-classifiers/*.model.*
-classifiers/*.pkl
-data/*.csv
