@@ -5,4 +5,4 @@
   - sudo rm -f /etc/boto.cfg
   - pip install -r requirements.txt
  script:
-    - python3 model.py
+   - python3 text_classifier.py
