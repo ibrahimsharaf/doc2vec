@@ -14,6 +14,3 @@ class Model(ABC):
     @abstractmethod
     def train_model(self):
         pass
-
-
-
