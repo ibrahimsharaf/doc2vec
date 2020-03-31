@@ -1,4 +1,5 @@
-# Doc2Vec Text Classification
+# Doc2Vec Text Classification [![Build Status](https://travis-ci.org/ibrahimsharaf/doc2vec.svg?branch=master)](https://travis-ci.org/ibrahimsharaf/doc2vec)
+
 Text classification model which uses gensim Doc2Vec for generating paragraph embeddings and scikit-learn Logistic Regression for classification.
 
 
