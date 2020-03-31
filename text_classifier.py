@@ -66,8 +66,8 @@ class TextClassifier():
 def run(dataset_file):
     tc = TextClassifier()
     tc.read_data(dataset_file)
-    tc.test_classifier()
     tc.train_classifier()
+    tc.test_classifier()
 
 
 if __name__ == "__main__":
