@@ -7,7 +7,7 @@ import inspect
 
 import numpy as np
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, f1_score
+from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score
 
 logging.basicConfig(
     format='%(asctime)s : %(levelname)s : %(message)s', level=logging.INFO)
@@ -32,10 +32,18 @@ class classifierModel(Model):
         training_predictions = self.model.predict(train_vectors)
         logging.info(
             'Training predicted classes: {}'.format(np.unique(
-                training_predictions)))
+                training_predictions)))       
         logging.info(
             'Training accuracy: {}'.format(
                 accuracy_score(training_labels, training_predictions)))
+        logging.info(
+            'Training precision: {}'.format(
+            precision_score(
+            training_labels, training_predictions)))
+        logging.info(
+            'Training recall: {}'.format(
+            recall_score(
+            training_labels, training_predictions))) 
         logging.info(
             'Training F1 score: {}'.format(
                 f1_score(
@@ -53,6 +61,14 @@ class classifierModel(Model):
         logging.info(
             'Testing accuracy: {}'.format(
                 accuracy_score(testing_labels, testing_predictions)))
+        logging.info(
+            'Testing precision: {}'.format(
+            precision_score(
+            testing_labels, testing_predictions)))
+        logging.info(
+            'Training recall: {}'.format(
+            recall_score(
+            testing_labels, testing_predictions))) 
         logging.info(
             'Testing F1 score: {}'.format(
                 f1_score(
